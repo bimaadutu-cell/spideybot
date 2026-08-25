@@ -11,7 +11,7 @@ const env = process.env;
 // timeoutMs bounds each attempt so an unreachable/slow database can never
 // block the whole start script past Railway's healthcheck window. Without
 // this, a bad DATABASE_URL (wrong host, no DB attached, etc.) can make
-// "drizzle-kit push" hang almost indefinitely on the TCP/SSL handshake,
+// "drizzle-kit migrate" hang almost indefinitely on the TCP/SSL handshake,
 // which means Next.js never even starts listening and the deploy is marked
 // as a healthcheck failure even though the build/deploy itself was fine.
 function run(command, args, timeoutMs) {
@@ -48,7 +48,7 @@ async function start() {
     let migrated = false;
     for (let attempt = 1; attempt <= 3; attempt += 1) {
       console.log(`[Railway] Database migration attempt ${attempt}/3`);
-      const result = await run(npm, ["run", "db:push", "--", "--force"], MIGRATION_ATTEMPT_TIMEOUT_MS);
+      const result = await run(npm, ["run", "db:migrate"], MIGRATION_ATTEMPT_TIMEOUT_MS);
       if (result.code === 0) {
         migrated = true;
         break;

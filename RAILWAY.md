@@ -26,16 +26,22 @@ Konfigurasi `railway.toml` sudah menetapkan command berikut:
 | --- | --- |
 | Build | RAILPACK mendeteksi `package-lock.json` dan menjalankan build Next.js dengan npm |
 | Pre-deploy | Tidak digunakan — sengaja dikosongkan agar service boot lebih dulu |
-| Start | `npm run start` (migration retry otomatis lalu Next.js start) |
+| Start | `npm run start` (migrasi SQL versioned non-interaktif dengan retry, lalu Next.js start) |
 | Health check | `GET /api/health` |
 
 Railway akan menyediakan `RAILWAY_VOLUME_MOUNT_PATH` secara otomatis ketika volume dipasang; kode juga dapat memakainya sebagai fallback untuk direktori data.[1]
+
+> Startup tidak lagi menjalankan `drizzle-kit push`, karena command tersebut dapat meminta pilihan rename/drop interaktif dan gagal pada container Railway yang tidak memiliki TTY. Schema sekarang dikunci dalam `drizzle/0000_small_beyonder.sql` dan dijalankan melalui `drizzle-kit migrate`, sehingga proses deploy tidak membutuhkan input terminal. Jangan menghapus folder `drizzle/` dari repository.
 
 ## Alur koneksi WhatsApp
 
 Buka **Connection**, pilih bot, lalu tekan **START / SHOW QR**. QR akan tampil setelah server menerima QR dari WhatsApp. Untuk pairing code, masukkan nomor internasional tanpa tanda `+`, lalu tekan **USE PAIRING CODE**. Setelah code muncul, pada WhatsApp buka **Linked devices → Link with phone number** dan masukkan code tersebut.
 
 Status, QR, pairing code, log Baileys, dan event command dikirim melalui realtime event bus. Ketika sesi sudah tersimpan di volume, tombol **START / SHOW QR** akan melanjutkan sesi yang sama tanpa pairing ulang. Jika perangkat logout, auth state dihapus oleh runtime dan QR baru memang diperlukan.
+
+## Jika deploy lama masih memakai konfigurasi cache
+
+Setelah mengunggah perubahan ini, lakukan **Redeploy** terbaru pada service aplikasi. Pastikan source deploy memang commit/arsip yang berisi `drizzle/0000_small_beyonder.sql`, package script `db:migrate`, dan startup yang memanggil `db:migrate`. Variabel `DATABASE_URL` tetap harus berada pada service aplikasi, bukan hanya pada service PostgreSQL.
 
 ## Validasi setelah deploy
 
