@@ -113,19 +113,23 @@ export async function runDownload(opts: {
   const durationMs = Date.now() - started;
 
   if (success) {
-    await db.insert(downloaderHistory).values({
-      userId: opts.userId ?? null,
-      botId: opts.botId ?? null,
-      platform,
-      url: parsedUrl,
-      provider: success.provider,
-      status: "success",
-      title: success.title ?? null,
-      mediaUrl: success.media[0]?.url ?? null,
-      mediaType: success.media[0]?.type ?? null,
-      durationMs,
-      attempts,
-    });
+    try {
+      await db.insert(downloaderHistory).values({
+        userId: opts.userId ?? null,
+        botId: opts.botId ?? null,
+        platform,
+        url: parsedUrl,
+        provider: success.provider,
+        status: "success",
+        title: success.title ?? null,
+        mediaUrl: success.media[0]?.url ?? null,
+        mediaType: success.media[0]?.type ?? null,
+        durationMs,
+        attempts,
+      });
+    } catch (err) {
+      console.warn("[Downloader] success history skipped:", (err as Error).message);
+    }
     await logEvent({
       userId: opts.userId ?? null,
       botId: opts.botId ?? null,
@@ -133,7 +137,7 @@ export async function runDownload(opts: {
       level: "success",
       message: `${platform} download resolved via ${success.provider} in ${durationMs}ms`,
       meta: { url: parsedUrl, attempts },
-    });
+    }).catch((err) => console.warn("[Downloader] success event skipped:", (err as Error).message));
     publish({
       type: "downloader.status",
       userId: opts.userId ?? null,
@@ -149,17 +153,21 @@ export async function runDownload(opts: {
       ? `All ${platform} providers failed: ${attempts.map((a) => `${a.provider} (${a.error ?? "failed"})`).join(" → ")}`
       : `No providers registered for ${platform}`;
 
-  await db.insert(downloaderHistory).values({
-    userId: opts.userId ?? null,
-    botId: opts.botId ?? null,
-    platform,
-    url: parsedUrl,
-    provider: null,
-    status: "failed",
-    durationMs,
-    attempts,
-    error,
-  });
+  try {
+    await db.insert(downloaderHistory).values({
+      userId: opts.userId ?? null,
+      botId: opts.botId ?? null,
+      platform,
+      url: parsedUrl,
+      provider: null,
+      status: "failed",
+      durationMs,
+      attempts,
+      error,
+    });
+  } catch (err) {
+    console.warn("[Downloader] failure history skipped:", (err as Error).message);
+  }
   await logEvent({
     userId: opts.userId ?? null,
     botId: opts.botId ?? null,
@@ -167,7 +175,7 @@ export async function runDownload(opts: {
     level: "error",
     message: error,
     meta: { url: parsedUrl },
-  });
+  }).catch((err) => console.warn("[Downloader] failure event skipped:", (err as Error).message));
   publish({
     type: "downloader.status",
     userId: opts.userId ?? null,

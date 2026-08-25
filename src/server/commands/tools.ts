@@ -4,13 +4,42 @@ import { fetchWithTimeout } from "@/server/downloader/types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+function escapeXml(value: string) {
+  return value.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" })[char] ?? char);
+}
+
+function localBratSvg(text: string) {
+  const words = text.trim().split(/\s+/);
+  const lines: string[] = [];
+  let line = "";
+  for (const word of words) {
+    const next = line ? `${line} ${word}` : word;
+    if (next.length > 22 && line) { lines.push(line); line = word; } else line = next;
+  }
+  if (line) lines.push(line);
+  const visible = lines.slice(0, 6);
+  const startY = 512 - ((visible.length - 1) * 62);
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024"><rect width="1024" height="1024" fill="#ffffff"/><g transform="rotate(-5 512 512)" fill="#111111" font-family="Arial,Helvetica,sans-serif" font-size="68" font-weight="900" text-anchor="middle">${visible.map((item, index) => `<text x="512" y="${startY + index * 124}">${escapeXml(item)}</text>`).join("")}</g></svg>`;
+}
+
+async function localBratBuffer(text: string) {
+  const sharpMod: any = await import("sharp");
+  const sharp = sharpMod.default ?? sharpMod;
+  return sharp(Buffer.from(localBratSvg(text))).png().toBuffer();
+}
+
 async function bratBuffer(text: string) {
-  const endpoint = `https://aqul-brat.hf.space/api/brat?text=${encodeURIComponent(text)}`;
-  const res = await fetchWithTimeout(endpoint, { timeoutMs: 30_000 });
-  if (!res.ok) throw new Error(`brat provider HTTP ${res.status}`);
-  const buf = Buffer.from(await res.arrayBuffer());
-  if (buf.length < 512) throw new Error("brat provider returned an empty image");
-  return buf;
+  try {
+    const endpoint = `https://aqul-brat.hf.space/api/brat?text=${encodeURIComponent(text)}`;
+    const res = await fetchWithTimeout(endpoint, { timeoutMs: 30_000 });
+    if (res.ok) {
+      const buf = Buffer.from(await res.arrayBuffer());
+      if (buf.length >= 512) return buf;
+    }
+  } catch {
+    /* Use the local generator when the optional remote provider is unavailable. */
+  }
+  return localBratBuffer(text);
 }
 
 export const toolCommands: CommandDef[] = [

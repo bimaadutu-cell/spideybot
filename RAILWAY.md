@@ -25,8 +25,8 @@ Konfigurasi `railway.toml` sudah menetapkan command berikut:
 | Tahap | Command |
 | --- | --- |
 | Build | RAILPACK mendeteksi `package-lock.json` dan menjalankan build Next.js dengan npm |
-| Pre-deploy | `npm run db:push` |
-| Start | `npm run start` |
+| Pre-deploy | Tidak digunakan — sengaja dikosongkan agar service boot lebih dulu |
+| Start | `npm run start` (migration retry otomatis lalu Next.js start) |
 | Health check | `GET /api/health` |
 
 Railway akan menyediakan `RAILWAY_VOLUME_MOUNT_PATH` secara otomatis ketika volume dipasang; kode juga dapat memakainya sebagai fallback untuk direktori data.[1]
@@ -40,7 +40,7 @@ Status, QR, pairing code, log Baileys, dan event command dikirim melalui realtim
 ## Validasi setelah deploy
 
 1. Buka `https://<domain-railway>/api/health`. Pastikan `status` bernilai `ok`, `database` bernilai `true`, `storage.writable` bernilai `true`, dan `auth.mode` bernilai `random-math`.
-2. Buka `/login`, pastikan soal berubah saat memilih **Dapatkan soal baru**, jawaban salah ditolak, dan jawaban benar mengarahkan ke `/dashboard`.
+2. Buka `/dashboard` secara langsung; halaman login sudah dinonaktifkan pada build publik ini.
 3. Buat bot, buka **Connection**, uji QR atau pairing code dengan perangkat WhatsApp yang memang akan ditautkan.
 4. Kirim `.menu` atau command yang terdaftar melalui WhatsApp. Command diproses oleh handler runtime dan usage-nya masuk ke halaman **Commands**.
 5. Restart service Railway. Pastikan sesi WhatsApp masih dapat dipulihkan dari volume dan tidak meminta QR baru kecuali perangkat telah logout.

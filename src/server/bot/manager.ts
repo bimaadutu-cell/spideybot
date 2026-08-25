@@ -228,7 +228,7 @@ export async function startBot(botId: string, opts: StartOptions = {}) {
       creds: state.creds,
       keys: baileys.makeCacheableSignalKeyStore(state.keys, logger),
     },
-    browser: usePairing ? baileys.Browsers.ubuntu("Chrome") : baileys.Browsers.appropriate("SpideyBot"),
+    browser: ["Ubuntu", "Chrome", "22.04"],
     markOnlineOnConnect: false,
     syncFullHistory: false,
     generateHighQualityLinkPreview: false,
