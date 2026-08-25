@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+:root {
+  --spidey-bg: #020817;
+  --spidey-panel: #071226;
+  --spidey-border: #15345d;
+  --spidey-blue: #22d3ee;
+  --spidey-blue-strong: #2563eb;
+  --spidey-white: #f8fbff;
+  --spidey-muted: #8fa8c7;
+}
+
+@theme inline {
+  --color-ink: #020817;
+  --color-panel: #071226;
+  --color-edge: #15345d;
+  --color-spidey: #f8fbff;
+  --color-web: #2563eb;
+  --color-neon: #67e8f9;
+}
+
+* { -webkit-tap-highlight-color: transparent; }
+html, body { max-width: 100vw; overflow-x: hidden; }
+body {
+  background:
+    radial-gradient(1000px 520px at 8% -12%, rgba(37, 99, 235, 0.3), transparent 62%),
+    radial-gradient(850px 560px at 112% 12%, rgba(34, 211, 238, 0.18), transparent 58%),
+    linear-gradient(150deg, #020817 0%, #04132c 52%, #020817 100%);
+  color: var(--spidey-white);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  min-height: 100dvh;
+}
+
+.web-grid {
+  background-image:
+    linear-gradient(rgba(148, 208, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 208, 255, 0.055) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.panel {
+  background: linear-gradient(160deg, rgba(10, 30, 61, 0.93), rgba(3, 13, 30, 0.94));
+  border: 1px solid var(--spidey-border);
+  border-radius: 1rem;
+  backdrop-filter: blur(10px);
+}
+.glow-blue { box-shadow: 0 0 42px -12px rgba(34, 211, 238, 0.68), 0 0 90px -44px rgba(37, 99, 235, 0.9); }
+.glow-red { box-shadow: 0 0 42px -12px rgba(34, 211, 238, 0.68); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  border-radius: .75rem; padding: .6rem 1rem; font-weight: 600; font-size: .875rem;
+  border: 1px solid var(--spidey-border); background: rgba(255,255,255,.045); color: var(--spidey-white);
+  transition: transform .16s ease-out, border-color .16s ease-out, background .16s ease-out, box-shadow .16s ease-out;
+  cursor: pointer; white-space: nowrap;
+}
+.btn:hover:not(:disabled) { border-color: rgba(103,232,249,.72); background: rgba(34,211,238,.1); transform: translateY(-1px); }
+.btn:active:not(:disabled) { transform: scale(.97); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-primary { background: linear-gradient(120deg, #0ea5e9, #2563eb); border-color: transparent; color: #effcff; box-shadow: 0 0 18px rgba(14,165,233,.2); }
+.btn-primary:hover:not(:disabled) { background: linear-gradient(120deg, #22d3ee, #3b82f6); border-color: transparent; }
+.btn-web { background: linear-gradient(120deg, #22d3ee, #60a5fa); border-color: transparent; color: #03142b; box-shadow: 0 0 18px rgba(34,211,238,.24); }
+.btn-web:hover:not(:disabled) { background: linear-gradient(120deg, #67e8f9, #93c5fd); border-color: transparent; }
+.btn-ghost { background: transparent; }
+.btn-danger { background: rgba(56,189,248,.08); border-color: rgba(56,189,248,.34); color: #bae6fd; }
+
+.chip { display: inline-flex; align-items: center; gap: .35rem; border-radius: 999px; padding: .2rem .6rem; font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; border: 1px solid var(--spidey-border); }
+.input { width: 100%; border-radius: .75rem; border: 1px solid var(--spidey-border); background: rgba(2,8,23,.82); padding: .65rem .85rem; font-size: .9rem; color: var(--spidey-white); outline: none; }
+.input::placeholder { color: #6f88a8; }
+.input:focus { border-color: rgba(103,232,249,.72); box-shadow: 0 0 0 3px rgba(34,211,238,.13), 0 0 20px -9px rgba(34,211,238,.7); }
+.terminal { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .78rem; line-height: 1.5; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #1e4d80; border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+@keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(103,232,249,.5); } 70% { box-shadow: 0 0 0 12px rgba(103,232,249,0); } 100% { box-shadow: 0 0 0 0 rgba(103,232,249,0); } }
+.live-dot { animation: pulse-ring 2s infinite; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
