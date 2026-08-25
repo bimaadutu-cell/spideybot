@@ -24,9 +24,9 @@ Konfigurasi `railway.toml` sudah menetapkan command berikut:
 
 | Tahap | Command |
 | --- | --- |
-| Build | RAILPACK mendeteksi `pnpm` dan menjalankan build Next.js |
-| Pre-deploy | `pnpm db:push` |
-| Start | `pnpm start` |
+| Build | RAILPACK mendeteksi `package-lock.json` dan menjalankan build Next.js dengan npm |
+| Pre-deploy | `npm run db:push` |
+| Start | `npm run start` |
 | Health check | `GET /api/health` |
 
 Railway akan menyediakan `RAILWAY_VOLUME_MOUNT_PATH` secara otomatis ketika volume dipasang; kode juga dapat memakainya sebagai fallback untuk direktori data.[1]

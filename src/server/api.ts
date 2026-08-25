@@ -12,11 +12,11 @@ export function errorJson(message: string, status = 400, extra?: Record<string, 
 function friendlyDatabaseError(err: unknown) {
   const value = err as { message?: string; code?: string; cause?: { code?: string; message?: string } };
   const code = value.code ?? value.cause?.code;
-  if (code === "42P01") return "Tabel database belum ada. Jalankan pnpm db:push di Railway lalu redeploy.";
-  if (code === "42703") return "Schema database belum sinkron dengan aplikasi. Jalankan pnpm db:push di Railway lalu redeploy.";
+  if (code === "42P01") return "Tabel database belum ada. Jalankan npm run db:push di Railway lalu redeploy.";
+  if (code === "42703") return "Schema database belum sinkron dengan aplikasi. Jalankan npm run db:push di Railway lalu redeploy.";
   if (code === "23503") return "Data terkait belum tersedia di database. Jalankan migrasi Railway dan coba lagi.";
   if (code === "23505") return "Data sudah ada. Muat ulang halaman lalu coba lagi.";
-  if (value.message?.includes("Failed query")) return "Database Railway gagal memproses permintaan. Pastikan DATABASE_URL benar dan jalankan pnpm db:push.";
+  if (value.message?.includes("Failed query")) return "Database Railway gagal memproses permintaan. Pastikan DATABASE_URL benar dan jalankan npm run db:push.";
   return value.message || "Internal error";
 }
 
