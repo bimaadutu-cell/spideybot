@@ -139,7 +139,14 @@ export default function DownloaderPage() {
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {result.result.media.map((m, i) => (
-                    <a key={i} href={m.url} target="_blank" rel="noreferrer" className="btn btn-web">
+                    <a
+                      key={i}
+                      href={`/api/downloader/fetch?url=${encodeURIComponent(m.url)}&name=${encodeURIComponent(
+                        result.result?.title || `${result.platform}-${i + 1}`,
+                      )}`}
+                      download
+                      className="btn btn-web"
+                    >
                       {m.type === "video" ? "🎬" : m.type === "audio" ? "🎵" : "🖼"} {m.quality ?? m.type}
                     </a>
                   ))}
@@ -210,7 +217,13 @@ export default function DownloaderPage() {
                     {h.status}
                   </span>
                   {h.mediaUrl && (
-                    <a href={h.mediaUrl} target="_blank" rel="noreferrer" className="btn px-2 py-1 text-[11px]">OPEN</a>
+                    <a
+                      href={`/api/downloader/fetch?url=${encodeURIComponent(h.mediaUrl)}&name=${encodeURIComponent(h.title || h.platform)}`}
+                      download
+                      className="btn px-2 py-1 text-[11px]"
+                    >
+                      DOWNLOAD
+                    </a>
                   )}
                 </div>
               </div>

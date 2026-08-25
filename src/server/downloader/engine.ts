@@ -8,16 +8,23 @@ import { tiklydown } from "./providers/tiklydown";
 import { snaptik } from "./providers/snaptik";
 import { snapinsta } from "./providers/snapinsta";
 import { instagramGraph, savevid } from "./providers/instagram";
-import { cobalt, youtubesave, ytOembed } from "./providers/youtube";
+import { youtubesave, ytOembed } from "./providers/youtube";
+import { makeCobalt } from "./providers/cobalt";
+
+const cobaltTiktok = makeCobalt("tiktok", 0);
+const cobaltInstagram = makeCobalt("instagram", 0);
+const cobaltYoutube = makeCobalt("youtube", 0);
 
 export const PROVIDERS: DownloadProvider[] = [
+  cobaltTiktok,
   tikwm,
   tiklydown,
   snaptik,
+  cobaltInstagram,
   snapinsta,
   instagramGraph,
   savevid,
-  cobalt,
+  cobaltYoutube,
   youtubesave,
   ytOembed,
 ];
