@@ -58,11 +58,11 @@ export default async function AuthErrorPage({
         </p>
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <Link href={provider ? `/api/auth/${provider}` : "/login"} className="btn btn-primary flex-1">
-            TRY AGAIN
+          <Link href="/dashboard" className="btn btn-primary flex-1">
+            GO TO DASHBOARD
           </Link>
-          <Link href="/login" className="btn flex-1">
-            BACK TO LOGIN
+          <Link href="/dashboard" className="btn flex-1">
+            BACK TO DASHBOARD
           </Link>
         </div>
       </div>

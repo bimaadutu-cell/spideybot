@@ -34,7 +34,7 @@ export default function Shell({ user, children }: { user: ShellUser; children: R
   }, [notificationsTick, pathname]);
   useEffect(() => setMoreOpen(false), [pathname]);
 
-  const logout = async () => { await fetch("/api/auth/logout", { method: "POST" }); router.push("/login"); router.refresh(); };
+  const logout = async () => { await fetch("/api/auth/logout", { method: "POST" }); router.push("/dashboard"); router.refresh(); };
   const active = (href: string) => pathname === href || (href !== "/dashboard" && pathname.startsWith(`${href}/`));
   const currentLabel = ALL_NAV.find((item) => active(item.href))?.label ?? "SpideyBot";
 
