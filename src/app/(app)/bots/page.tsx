@@ -54,7 +54,7 @@ export default function BotsPage() {
     <div className="space-y-4">
       <Panel
         title="My Bots"
-        subtitle="Every bot runs its own Baileys 6.7.18 socket and auth state"
+        subtitle="Every bot runs its own real Baileys 6.7.22 socket and persistent auth state"
         right={
           <div className="flex gap-2">
             <button type="button" className="btn" onClick={() => void reload()}>🔄 REFRESH</button>

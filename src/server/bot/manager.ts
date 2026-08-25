@@ -115,6 +115,18 @@ async function silentLogger() {
 
 export type StartOptions = { pairingPhone?: string };
 
+async function issuePairingCode(rt: RuntimeBot, rawPhone: string) {
+  const phone = rawPhone.replace(/[^0-9]/g, "");
+  if (!rt.sock || !phone) throw new Error("A valid international phone number is required");
+  const code: string = await rt.sock.requestPairingCode(phone);
+  rt.qr = null;
+  rt.pairing = { code, phone, expiresAt: Date.now() + 120_000 };
+  await setStatus(rt, "pairing", "Pairing code issued by WhatsApp");
+  publish({ type: "bot.pairing", userId: rt.userId, botId: rt.id, message: "Pairing code issued by WhatsApp", payload: rt.pairing });
+  await logEvent({ userId: rt.userId, botId: rt.id, channel: "BAILEYS", message: `Pairing code generated for +${phone}` });
+  return runtimeSnapshot(rt.id);
+}
+
 export async function startBot(botId: string, opts: StartOptions = {}) {
   ensureDirs();
   const rows = await db.select().from(bots).where(eq(bots.id, botId)).limit(1);
@@ -122,7 +134,16 @@ export async function startBot(botId: string, opts: StartOptions = {}) {
   if (!bot) throw new Error("Bot not found");
 
   const existing = registry().get(botId);
-  if (existing && (existing.status === "connected" || existing.status === "connecting")) {
+  if (existing && ["connected", "connecting", "waiting_qr", "pairing", "reconnecting"].includes(existing.status)) {
+    if (opts.pairingPhone && existing.sock && existing.status !== "connected") {
+      try {
+        return await issuePairingCode(existing, opts.pairingPhone);
+      } catch (err) {
+        existing.lastError = `Pairing failed: ${(err as Error).message}`;
+        await setStatus(existing, "disconnected", existing.lastError);
+        throw err;
+      }
+    }
     return runtimeSnapshot(botId);
   }
   if (existing?.sock) {
@@ -218,34 +239,13 @@ export async function startBot(botId: string, opts: StartOptions = {}) {
   sock.ev.on("creds.update", saveCreds);
 
   if (usePairing) {
-    const phone = opts.pairingPhone!.replace(/[^0-9]/g, "");
+    const phone = opts.pairingPhone!;
     setTimeout(async () => {
       try {
-        const code: string = await sock.requestPairingCode(phone);
-        rt.pairing = { code, phone, expiresAt: Date.now() + 120_000 };
-        rt.status = "pairing";
-        publish({
-          type: "bot.pairing",
-          userId: rt.userId,
-          botId: rt.id,
-          message: "Pairing code issued by WhatsApp",
-          payload: { code, phone, expiresAt: rt.pairing.expiresAt },
-        });
-        await logEvent({
-          userId: rt.userId,
-          botId: rt.id,
-          channel: "BAILEYS",
-          message: `Pairing code generated for +${phone}`,
-        });
+        await issuePairingCode(rt, phone);
       } catch (err) {
         rt.lastError = `Pairing failed: ${(err as Error).message}`;
-        await logEvent({
-          userId: rt.userId,
-          botId: rt.id,
-          channel: "ERROR",
-          level: "error",
-          message: rt.lastError,
-        });
+        await logEvent({ userId: rt.userId, botId: rt.id, channel: "ERROR", level: "error", message: rt.lastError });
         await setStatus(rt, "disconnected", rt.lastError);
       }
     }, 3500);

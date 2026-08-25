@@ -4,6 +4,8 @@ import { and, eq, gte, sql } from "drizzle-orm";
 import type { CommandDef } from "./types";
 import { commandAvailability, fmtDuration } from "./types";
 
+const WEBSITE_URL = "https://spideybot-v1.up.railway.app";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export const generalCommands: CommandDef[] = [
@@ -48,6 +50,7 @@ export const generalCommands: CommandDef[] = [
         out += `${icons[cat] ?? "•"} *${cat.toUpperCase()}*\n${list.sort().map((c) => `  ⟡ ${c}`).join("\n")}\n\n`;
       }
       out += `_Use ${ctx.prefix}cmdinfo <command> for details._`;
+      out += `\n\n🌐 *Website resmi:* ${WEBSITE_URL}`;
       await ctx.reply(out.trim());
     },
   },
@@ -73,6 +76,7 @@ export const generalCommands: CommandDef[] = [
           `👥 Group only: ${def.groupOnly ? "yes" : "no"}`,
           `🛡 Admin only: ${def.adminOnly ? "yes" : "no"}`,
           `⚙️ Status: ${available ? "available" : `unavailable — ${blockers.join(", ")}`}`,
+          `🌐 Website: ${WEBSITE_URL}`,
         ]
           .filter(Boolean)
           .join("\n"),
@@ -112,7 +116,7 @@ export const generalCommands: CommandDef[] = [
     description: "Support information for this SpideyBot deployment",
     async run(ctx) {
       await ctx.reply(
-        "🕷️ *Support SPIDEYBOT*\n\nThis instance is self-hosted. Ask the operator of this bot for donation details — no payment channel is configured inside the bot itself.",
+        `🕷️ *Support SPIDEYBOT*\n\nWebsite resmi: ${WEBSITE_URL}\n\nThis instance is self-hosted. Ask the operator of this bot for donation details — no payment channel is configured inside the bot itself.`,
       );
     },
   },

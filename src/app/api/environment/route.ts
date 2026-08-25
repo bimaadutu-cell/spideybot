@@ -63,7 +63,7 @@ export async function GET(req: Request) {
       ],
       runtime: {
         nodeEnv: process.env.NODE_ENV ?? "development",
-        baileys: "@whiskeysockets/baileys@6.7.18",
+        baileys: "@whiskeysockets/baileys@6.7.22",
         ffmpeg: await hasFfmpeg(),
         sharp: await hasSharp(),
       },

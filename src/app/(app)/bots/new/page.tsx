@@ -16,7 +16,7 @@ export default function CreateBotPage() {
     description: "",
     prefix: ".",
     ownerNumber: "",
-    connectionMode: "qr" as "qr" | "pairing",
+    connectionMode: "qr" as "qr",
     autoReconnect: true,
     features: {
       downloader: true,
@@ -85,22 +85,16 @@ export default function CreateBotPage() {
           <div className="space-y-3 text-sm text-slate-300">
             <div className="rounded-xl border border-edge bg-black/40 p-4">
               <p className="text-xs uppercase tracking-widest text-slate-500">Engine</p>
-              <p className="mt-1 font-mono text-[#37e6ff]">@whiskeysockets/baileys@6.7.18</p>
+              <p className="mt-1 font-mono text-[#37e6ff]">@whiskeysockets/baileys@6.7.22</p>
               <p className="mt-2 text-xs text-slate-500">
                 Multi-file auth state per bot · real QR from <code>connection.update</code> · real pairing code from{" "}
                 <code>requestPairingCode()</code>.
               </p>
             </div>
-            <Field label="Connection mode">
-              <div className="grid grid-cols-2 gap-2">
-                <button type="button" className={`btn ${form.connectionMode === "qr" ? "btn-web" : ""}`} onClick={() => setForm({ ...form, connectionMode: "qr" })}>
-                  🔳 QR CODE
-                </button>
-                <button type="button" className={`btn ${form.connectionMode === "pairing" ? "btn-web" : ""}`} onClick={() => setForm({ ...form, connectionMode: "pairing" })}>
-                  📲 PAIRING CODE
-                </button>
-              </div>
-            </Field>
+            <div className="rounded-xl border border-cyan-300/20 bg-cyan-300/[0.06] p-4">
+              <p className="text-xs font-bold uppercase tracking-widest text-cyan-100">Automatic connection flow</p>
+              <p className="mt-2 text-xs leading-relaxed text-slate-400">QR akan muncul otomatis saat bot dijalankan. Jika memilih pairing code, masukkan nomor WhatsApp terlebih dahulu di Connection Center.</p>
+            </div>
             <Toggle label="Auto reconnect on disconnect" checked={form.autoReconnect} onChange={(v) => setForm({ ...form, autoReconnect: v })} />
           </div>
         )}
@@ -134,7 +128,7 @@ export default function CreateBotPage() {
             <Row k="Description" v={form.description || "-"} />
             <Row k="Prefix" v={form.prefix} />
             <Row k="Owner" v={form.ownerNumber || "-"} />
-            <Row k="Engine" v="@whiskeysockets/baileys@6.7.18" />
+            <Row k="Engine" v="@whiskeysockets/baileys@6.7.22" />
             <Row k="Connection" v={form.connectionMode === "qr" ? "QR code" : "Pairing code"} />
             <Row k="Auto reconnect" v={form.autoReconnect ? "yes" : "no"} />
             <Row k="Features" v={Object.entries(form.features).filter(([, v]) => v).map(([k]) => k).join(", ") || "none"} />

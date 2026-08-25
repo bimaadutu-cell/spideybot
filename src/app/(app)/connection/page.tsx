@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useRealtime } from "@/components/RealtimeProvider";
@@ -16,6 +16,7 @@ function ConnectionCenter() {
   const [phone, setPhone] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const autoStarted = useRef<string | null>(null);
 
   useEffect(() => {
     if (!selected && data?.bots.length) setSelected(data.bots[0].id);
@@ -41,6 +42,15 @@ function ConnectionCenter() {
   };
 
   const botEvents = events.filter((e) => e.botId === selected).slice(-25).reverse();
+
+  useEffect(() => {
+    if (!bot || busy || autoStarted.current === bot.id) return;
+    const status = rt?.status ?? "offline";
+    if (["offline", "disconnected"].includes(status)) {
+      autoStarted.current = bot.id;
+      void act("start");
+    }
+  }, [bot, busy, rt?.status]);
 
   return (
     <div className="space-y-4">
@@ -100,7 +110,7 @@ function ConnectionCenter() {
               ) : (
                 <div className="text-center text-slate-500">
                   <div className="text-5xl">🔳</div>
-                  <p className="mt-3 text-xs">Start the bot to request a QR code from WhatsApp,<br />or use a pairing code with your phone number.</p>
+                  <p className="mt-3 text-center text-xs text-slate-500">QR otomatis diminta dari WhatsApp saat halaman koneksi dibuka.<br />Untuk pairing code, masukkan nomor terlebih dahulu di bawah.</p>
                 </div>
               )}
             </div>
@@ -115,7 +125,7 @@ function ConnectionCenter() {
             </div>
 
             <div className="mt-4 rounded-xl border border-edge p-3">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Use pairing code</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Pairing code · nomor wajib diisi</p>
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                 <input className="input" placeholder="6281234567890" value={phone} onChange={(e) => setPhone(e.target.value)} />
                 <button
@@ -128,7 +138,7 @@ function ConnectionCenter() {
                 </button>
               </div>
               <p className="mt-2 text-[10px] text-slate-500">
-                Baileys requests the code from WhatsApp servers — it appears above within a few seconds.
+                Masukkan nomor internasional tanpa tanda +, lalu kode diminta langsung dari server WhatsApp.
               </p>
             </div>
           </Panel>

@@ -287,13 +287,19 @@ export async function upsertUserFromProvider(profile: ProviderProfile) {
 /* ------------------------------- auditing ------------------------------ */
 
 export async function logActivity(userId: number, action: string, description: string, ip?: string | null) {
-  await db.insert(activityLogs).values({ userId, action, description, ip: ip ?? null });
+  try {
+    await db.insert(activityLogs).values({ userId, action, description, ip: ip ?? null });
+  } catch (err) {
+    console.warn("[Activity] skipped:", (err as Error).message);
+  }
 }
 
 export async function notify(userId: number, type: string, title: string, body?: string) {
-  const rows = await db
-    .insert(notifications)
-    .values({ userId, type, title, body: body ?? null })
-    .returning();
-  return rows[0];
+  try {
+    const rows = await db.insert(notifications).values({ userId, type, title, body: body ?? null }).returning();
+    return rows[0];
+  } catch (err) {
+    console.warn("[Notification] skipped:", (err as Error).message);
+    return undefined;
+  }
 }

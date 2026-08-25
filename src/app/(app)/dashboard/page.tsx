@@ -37,12 +37,12 @@ export default function DashboardPage() {
     <div className="space-y-4">
       <div className="panel relative overflow-hidden p-5 sm:p-7">
         <div className="pointer-events-none absolute -right-16 -top-16 text-[10rem] opacity-10">🕷️</div>
-        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#ff5c74]">SPIDEYBOT CONTROL</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-200">SPIDEYBOT CONTROL</p>
         <h1 className="mt-2 text-2xl font-black text-white sm:text-3xl">
           Welcome back, {me?.user?.name ?? "operator"} 🕷️
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-slate-400">
-          Real Baileys 6.7.18 engine · real OAuth sessions · real downloader providers. Every number below comes from
+          Real Baileys 6.7.22 engine · public operator access · real downloader providers. Every number below comes from
           the live runtime and the PostgreSQL database.
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
@@ -54,15 +54,15 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
-        <StatCard label="Bots" value={data?.bots ?? 0} accent="red" />
-        <StatCard label="Online Bots" value={online} accent="green" hint={connected ? "live stream" : "stream offline"} />
+        <StatCard label="Bots" value={data?.bots ?? 0} accent="web" />
+        <StatCard label="Online Bots" value={online} accent="neon" hint={connected ? "live stream" : "stream offline"} />
         <StatCard label="Messages" value={data?.messages ?? 0} accent="web" hint="since process start" />
         <StatCard label="Commands" value={data?.commands ?? 0} accent="neon" hint="all time" />
         <StatCard label="Groups" value={data?.groups ?? 0} accent="web" />
         <StatCard
           label="Downloads"
           value={data?.downloads ?? 0}
-          accent="red"
+          accent="web"
           hint={`${data?.downloadsSucceeded ?? 0} ok · ${data?.downloadsLast24h ?? 0} in 24h`}
         />
       </div>

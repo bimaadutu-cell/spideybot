@@ -63,7 +63,9 @@ export async function POST(req: Request) {
 
     await logActivity(user.id, "bot.create", `You created ${name}`);
     await notify(user.id, "bot.created", `${name} created`, "Open the Connection Center to link WhatsApp.");
-    await logEvent({ userId: user.id, botId: id, channel: "SYSTEM", message: `Bot ${name} created` });
+    await logEvent({ userId: user.id, botId: id, channel: "SYSTEM", message: `Bot ${name} created` }).catch((err) => {
+      console.warn("[Bot] event log skipped:", (err as Error).message);
+    });
 
     if (body.deploy) {
       startBot(id).catch(async (err) => {
