@@ -11,6 +11,11 @@ export const pool =
   globalForDb.__arenaNextJsPostgresqlPool ??
   new Pool({
     connectionString: databaseUrl,
+    // Fail fast instead of hanging forever if the host is unreachable or
+    // credentials are wrong — keeps /api/health responsive under load.
+    connectionTimeoutMillis: 10_000,
+    idleTimeoutMillis: 30_000,
+    max: 10,
   });
 
 if (process.env.NODE_ENV !== "production") {

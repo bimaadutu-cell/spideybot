@@ -8,11 +8,27 @@ import { registry } from "@/server/bot/manager";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error("timeout")), ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
+}
+
 export async function GET(req: Request) {
   logStartupConfig();
   let database = false;
   try {
-    await db.execute(sql`select 1`);
+    await withTimeout(db.execute(sql`select 1`), 5_000);
     database = true;
   } catch {
     database = false;
