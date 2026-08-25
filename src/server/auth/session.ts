@@ -93,8 +93,8 @@ export async function createMathUser(opts: { userAgent?: string | null; ip?: str
     .returning({ id: users.id }))[0]?.id;
   if (!userId) throw new Error("Could not create local user");
   await db.update(users).set({ lastLoginAt: now, updatedAt: now }).where(eq(users.id, userId));
-  await createSession({ userId, provider: "math", ...opts });
-  return userId;
+  const session = await createSession({ userId, provider: "math", ...opts });
+  return { userId, sessionId: session.id, expiresAt: session.expiresAt };
 }
 
 export async function createSession(opts: {
@@ -122,7 +122,7 @@ export async function createSession(opts: {
     path: "/",
     expires: expiresAt,
   });
-  return id;
+  return { id, expiresAt };
 }
 
 export async function destroySession() {

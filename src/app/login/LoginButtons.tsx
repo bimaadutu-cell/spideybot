@@ -43,8 +43,10 @@ export default function LoginButtons() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ challengeId: challenge.id, answer }),
       });
-      const data = (await res.json()) as { error?: string; redirect?: string };
-      if (!res.ok) throw new Error(data.error ?? "Jawaban tidak valid.");
+      const raw = await res.text();
+      let data: { error?: string; redirect?: string } = {};
+      try { data = JSON.parse(raw) as { error?: string; redirect?: string }; } catch { /* server returned non-JSON */ }
+      if (!res.ok) throw new Error(data.error ?? `Login gagal (HTTP ${res.status}). Periksa DATABASE_URL dan migrasi Railway.`);
       window.location.assign(data.redirect ?? "/dashboard");
     } catch (err) {
       setError((err as Error).message);

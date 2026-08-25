@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { clientIp, rateLimit } from "@/server/api";
 import { consumeMathChallenge } from "@/server/auth/math";
-import { createMathUser, getSessionUser, logActivity } from "@/server/auth/session";
+import { createMathUser, getSessionUser, logActivity, SESSION_COOKIE, sign } from "@/server/auth/session";
 import { appUrlFromRequest } from "@/server/config";
 
 export const runtime = "nodejs";
@@ -27,12 +27,26 @@ export async function POST(req: Request) {
   }
 
   const baseUrl = appUrlFromRequest(req);
-  await createMathUser({
+  const session = await createMathUser({
     userAgent: req.headers.get("user-agent"),
     ip,
     secure: baseUrl.startsWith("https://"),
   });
-  const user = await getSessionUser();
-  if (user) await logActivity(user.id, "auth.math_login", "Signed in with a one-time random math challenge", ip);
-  return NextResponse.json({ ok: true, redirect: "/dashboard" });
+
+  // Audit logging is deliberately best-effort: a successful session must not be
+  // turned into a failed login just because the activity table is unavailable.
+  try {
+    await logActivity(session.userId, "auth.math_login", "Signed in with a one-time random math challenge", ip);
+  } catch (err) {
+    console.warn("[Auth] Math login audit skipped:", (err as Error).message);
+  }
+  const response = NextResponse.json({ ok: true, redirect: "/dashboard" });
+  response.cookies.set(SESSION_COOKIE, sign(session.sessionId), {
+    httpOnly: true,
+    secure: baseUrl.startsWith("https://"),
+    sameSite: "lax",
+    path: "/",
+    expires: session.expiresAt,
+  });
+  return response;
 }
