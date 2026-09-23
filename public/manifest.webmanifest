@@ -1,0 +1,19 @@
+{
+  "id": "./",
+  "name": "CREEPY by Bimz",
+  "short_name": "CREEPY",
+  "description": "The Old House. An original first-person survival horror game by Bimz.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#08090a",
+  "theme_color": "#08090a",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    { "src": "./icons/creepy-icon.jpg", "type": "image/jpeg", "sizes": "192x192", "purpose": "any" },
+    { "src": "./icons/creepy-icon.jpg", "type": "image/jpeg", "sizes": "512x512", "purpose": "any" },
+    { "src": "./icons/creepy-icon.jpg", "type": "image/jpeg", "sizes": "any", "purpose": "maskable" },
+    { "src": "./icons/creepy.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any" }
+  ]
+}

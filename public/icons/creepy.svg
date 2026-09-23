@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Creepy eye">
+  <defs>
+    <radialGradient id="bg"><stop stop-color="#202021"/><stop offset="1" stop-color="#090a0b"/></radialGradient>
+    <radialGradient id="iris"><stop stop-color="#eb362b"/><stop offset=".56" stop-color="#a71d1d"/><stop offset="1" stop-color="#29080b"/></radialGradient>
+    <linearGradient id="bone" x2=".8" y2="1"><stop stop-color="#f4efe5"/><stop offset="1" stop-color="#a99f92"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="11"/></filter>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <path d="M95 258C151 195 212 177 256 177s105 18 161 81c-56 63-117 81-161 81S151 321 95 258Z" fill="#a42c29" opacity=".35" filter="url(#glow)"/>
+  <path d="M94 257c58-64 116-84 162-84 49 0 105 22 162 84-57 63-113 85-162 85-46 0-104-20-162-85Zm59 0c31 30 67 46 103 46s72-16 103-46c-31-30-67-46-103-46s-72 16-103 46Z" fill="url(#bone)" fill-rule="evenodd"/>
+  <circle cx="256" cy="257" r="55" fill="#131316"/>
+  <ellipse cx="256" cy="257" rx="21" ry="46" fill="url(#iris)"/>
+  <path d="m160 208-20-28 14 35m200-7 20-28-14 35M130 304l-19 17 27-10m244-7 19 17-27-10" stroke="#7e1d1b" stroke-width="5" stroke-linecap="round"/>
+  <path d="m198 208-10-20m142 20 10-20M193 318l-5 20m145-20 5 20" stroke="#341116" stroke-width="4" stroke-linecap="round"/>
+</svg>
